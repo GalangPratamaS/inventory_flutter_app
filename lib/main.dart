@@ -3,6 +3,7 @@ import 'package:inventory_flutter/helper/shared_pref.dart';
 import 'package:inventory_flutter/provider/item_provider.dart';
 import 'package:inventory_flutter/ui/pages/home_page.dart';
 import 'package:inventory_flutter/ui/pages/login_page.dart';
+import 'package:inventory_flutter/ui/pages/register_page.dart';
 import 'package:inventory_flutter/ui/pages/search_page.dart';
 import 'package:provider/provider.dart';
 
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => ItemProvider(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(232, 231, 28, 146)),
@@ -34,6 +36,7 @@ class MyApp extends StatelessWidget {
         home:loginPref ?  const HomePage() : const LoginPage(),
         routes: {
           LoginPage.route : (context) => const LoginPage(),
+          RegisterPage.route : (context) => const RegisterPage(),
           HomePage.route : (context) => const HomePage(),
           SearchPage.route : (context) => const SearchPage(),    
         },

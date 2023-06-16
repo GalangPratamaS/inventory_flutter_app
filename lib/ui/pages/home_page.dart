@@ -42,7 +42,7 @@ class HomePage extends StatelessWidget {
           Navigator.push(context, route);
         },
         backgroundColor: Colors.red,
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add, color: Colors.white,),
       ),
     );
   }

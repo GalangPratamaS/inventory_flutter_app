@@ -2,25 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:inventory_flutter/helper/shared_pref.dart';
 import 'package:inventory_flutter/model/response_login.dart';
+import 'package:inventory_flutter/model/response_register.dart';
 import 'package:inventory_flutter/service/auth_services.dart';
 import 'package:inventory_flutter/ui/pages/home_page.dart';
-import 'package:inventory_flutter/ui/pages/register_page.dart';
+import 'package:inventory_flutter/ui/pages/login_page.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 import '../../style/text_input.dart';
 
-class LoginPage extends StatefulWidget {
- static const String route = "/login";
- const LoginPage({super.key});
+class RegisterPage extends StatefulWidget {
+ static const String route = "/register";
+ const RegisterPage({super.key});
 
  @override
- State<LoginPage> createState() => _LoginPageState();
+ State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
  
  final _formKey = GlobalKey<FormState>();
+ late String name;
  late String email;
+ late String phone;
  late String password;
  bool isLoading = false;
  final AuthServices _auth = AuthServices();
@@ -53,6 +56,16 @@ class _LoginPageState extends State<LoginPage> {
                  height: 24,
                ),
                TextFormField(
+                 keyboardType: TextInputType.name,
+                 style: const TextStyle(color: Colors.black),
+                 textAlign: TextAlign.center,
+                 decoration: loginTextInputDecoration('Enter your name..'),
+                 validator: validator,
+                 onChanged: (newValue) {
+                   name = newValue;
+                 },
+               ),              
+               TextFormField(
                  keyboardType: TextInputType.emailAddress,
                  style: const TextStyle(color: Colors.black),
                  textAlign: TextAlign.center,
@@ -75,6 +88,16 @@ class _LoginPageState extends State<LoginPage> {
                    password = newValue;
                  },
                ),
+                TextFormField(
+                 keyboardType: TextInputType.text,
+                 style: const TextStyle(color: Colors.black),
+                 textAlign: TextAlign.center,
+                 decoration: loginTextInputDecoration('Enter your phone..'),
+                 validator: validator,
+                 onChanged: (newValue) {
+                   phone = newValue;
+                 },
+               ),
                Padding(
                  padding: const EdgeInsets.symmetric(vertical: 16),
                  child: Material(
@@ -88,15 +111,15 @@ class _LoginPageState extends State<LoginPage> {
                             setState(() {
                               isLoading = true;
                             });
-                            ResponseLogin? loginStatus = await _auth.login(email, password);
-                            final isSukses = loginStatus!.sukses ?? false;
+                            ResponseRegister? registerStatus = await _auth.register(name,email, password,phone);
+                            final isSukses = registerStatus!.sukses ?? false;
                             if(isSukses) {
                               await _sHaredPref.save('Login',true);
                               if(!mounted) return ;
                               // Login sukses dan navigasi ke halaman home
                               Navigator.pushReplacementNamed(context,HomePage.route);
                             } else {
-                              Fluttertoast.showToast(msg: loginStatus.pesan ?? "");
+                              Fluttertoast.showToast(msg: registerStatus.pesan ?? "error gagal daftar");
                             }
                             setState(() {
                               isLoading = false;                              
@@ -106,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
                      minWidth: 200.0,
                      height: 42,
                      child: const Text(
-                       'Log In',
+                       'Register',
                        style: TextStyle(color: Colors.white),
                      ),
                    ),
@@ -117,17 +140,17 @@ class _LoginPageState extends State<LoginPage> {
                  child: Row(
                    mainAxisAlignment: MainAxisAlignment.center,
                    children: [
-                     const Text("Don't have an account?"),
+                     const Text("Already have account?"),
                      const SizedBox(
                        width: 5,
                      ),
                      GestureDetector(
                          onTap: () {
-                            final route = MaterialPageRoute(builder: (context) => const RegisterPage());
-                            Navigator.push(context, route);
+                          final route = MaterialPageRoute(builder: (context) => const LoginPage());
+                          Navigator.push(context, route);
                          },
                          child: const Text(
-                           "Register",
+                           "Login",
                            style: TextStyle(
                                color: Colors.red, fontWeight: FontWeight.bold),
                          ))
